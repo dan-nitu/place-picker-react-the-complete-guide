@@ -1,11 +1,28 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
+const TIMER = 3000;
 
 export default function DeleteConfirmation({ onConfirm, onCancel }) {
+  const [remainingTime, setRemainingTime] = useState(TIMER);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log('INTERVAL');
+      setRemainingTime((prevTime) => prevTime - 10);
+    }, 10);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+  // here we name the interval in order to be able to clear it when we return the cleanup function. otherwise it will keep running even after the component is unmounted.
+  // the empty dependencies array means that this effect will only run once when the component is mounted, and the cleanup function will run when the component is unmounted.
+
   useEffect(() => {
     console.log('TIMER SET');
     const timer = setTimeout(() => {
       onConfirm();
-    }, 3000);
+    }, TIMER);
 
     return () => {
       console.log('Cleaning up timer');
@@ -26,6 +43,7 @@ export default function DeleteConfirmation({ onConfirm, onCancel }) {
         <button onClick={onConfirm} className='button'>
           Yes
         </button>
+        <progress value={remainingTime} max={TIMER} />
       </div>
     </div>
   );
