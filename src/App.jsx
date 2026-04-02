@@ -44,6 +44,15 @@ function App() {
       const place = AVAILABLE_PLACES.find((place) => place.id === id);
       return [place, ...prevPickedPlaces];
     });
+
+    const storedIds = JSON.parse(localStorage.getItem('selectedPlaces')) || [];
+    if (storedIds.indexOf(id) === -1) {
+      localStorage.setItem(
+        'selectedPlaces',
+        JSON.stringify([id, ...storedIds]),
+      );
+    }
+    // ^ it's a side effect but it's not related to the component's state, so we don't need to use useEffect for it
   }
 
   function handleRemovePlace() {
