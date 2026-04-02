@@ -13,8 +13,8 @@ const storedPlaces = storedIds.map((id) =>
 );
 
 function App() {
-  const modal = useRef();
   const selectedPlace = useRef();
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [availablePlaces, setAvailablePlaces] = useState([]);
   const [pickedPlaces, setPickedPlaces] = useState(storedPlaces);
 
@@ -33,7 +33,7 @@ function App() {
   // ^ 2nd argument is an array of dependencies, if it's empty, the function will be executed only once after the first render
 
   function handleStartRemovePlace(id) {
-    modal.current.open();
+    setModalIsOpen(true);
     selectedPlace.current = id;
   }
 
@@ -64,7 +64,7 @@ function App() {
     setPickedPlaces((prevPickedPlaces) =>
       prevPickedPlaces.filter((place) => place.id !== selectedPlace.current),
     );
-    modal.current.close();
+    setModalIsOpen(false);
 
     const storedIds = JSON.parse(localStorage.getItem('selectedPlaces')) || [];
     localStorage.setItem(
@@ -75,7 +75,7 @@ function App() {
 
   return (
     <>
-      <Modal ref={modal}>
+      <Modal open={modalIsOpen} onClose={handleStopRemovePlace}>
         <DeleteConfirmation
           onCancel={handleStopRemovePlace}
           onConfirm={handleRemovePlace}
