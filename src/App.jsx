@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 
 import Places from './components/Places.jsx';
 import { AVAILABLE_PLACES } from './data.js';
@@ -60,7 +60,7 @@ function App() {
     // ^ it's a side effect but it's not related to the component's state, so we don't need to use useEffect for it
   }
 
-  function handleRemovePlace() {
+  const handleRemovePlace = useCallback(function handleRemovePlace() {
     setPickedPlaces((prevPickedPlaces) =>
       prevPickedPlaces.filter((place) => place.id !== selectedPlace.current),
     );
@@ -71,7 +71,9 @@ function App() {
       'selectedPlaces',
       JSON.stringify(storedIds.filter((id) => id !== selectedPlace.current)),
     );
-  }
+  }, []);
+  // useCallback receives a function and an array of dependencies, it returns a memoized version of the function that only changes if one of the dependencies has changed, in this case, the function will be recreated only if the component is re-rendered and the dependencies change, but since there are no dependencies, the function will be created only once and will be reused on every render, this is useful to prevent unnecessary re-renders of child components that receive this function as a prop. it is used here to prevent the function from being recreated on every render, which would cause the Modal component to re-render every time the App component re-renders, even if the Modal component doesn't need to re-render, basically to prevent an infinite loop of re-renders between the App and Modal components, because the Modal component receives the handleRemovePlace function as a prop, if the function is recreated on every render, the Modal component will re-render on every render, which will cause the App component to re-render again, and so on.
+  // the dependencies array is the same as the one in useEffect, if the dependencies change, the function will be recreated, but since there are no dependencies, the function will be created only once and will be reused on every render
 
   return (
     <>
