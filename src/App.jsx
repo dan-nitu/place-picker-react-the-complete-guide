@@ -102,7 +102,7 @@ function App() {
         <Places
           title='Available Places'
           places={availablePlaces}
-          fallbackText='SOrting places by distance...'
+          fallbackText='Sorting places by distance...'
           onSelectPlace={handleSelectPlace}
         />
       </main>
